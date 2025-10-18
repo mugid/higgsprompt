@@ -101,7 +101,7 @@ export default function BattlesPage() {
       <div className="p-8">
         <div className="max-w-6xl mx-auto space-y-8">
           <div className="text-center space-y-4">
-            <h1 className="text-4xl font-bold">⚔️ Battle Arena</h1>
+            <h1 className="text-4xl font-bold">Competitions</h1>
             <p className="text-muted-foreground text-lg">
               Discover and engage with the best prompt engineering battles
             </p>
@@ -110,10 +110,10 @@ export default function BattlesPage() {
           {/* Search and Sort */}
           <Card>
             <CardHeader>
-              <CardTitle>Explore Battles</CardTitle>
+              <CardTitle>Explore Competitions</CardTitle>
               <CardDescription>
                 Find the most interesting prompt engineering challenges and
-                solutions
+                solutions and earn points/money
               </CardDescription>
             </CardHeader>
             <CardContent>
