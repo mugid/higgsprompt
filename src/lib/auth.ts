@@ -4,7 +4,7 @@ import { db } from "./db";
 import { schema } from "./db/schema";
 
 export const auth = betterAuth({
-  database: drizzleAdapter(db, {
+  adapter: drizzleAdapter(db, {
     provider: "pg",
     schema,
   }),
@@ -23,10 +23,15 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // 1 day
   },
   user: {
+    modelName: "user",
     additionalFields: {
-      image: {
+      userType: {
         type: "string",
-        required: false,
+        required: true,
+      },
+      points: {
+        type: "number",
+        required: true,
       },
     },
   },
