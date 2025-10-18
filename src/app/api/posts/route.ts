@@ -1,12 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
-import { posts } from "@/lib/db/schema";
+import { posts, user } from "@/lib/db/schema";
 import { auth } from "@/lib/auth";
 import { eq } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const allPosts = await db.select().from(posts);
+    const allPosts = await db
+      .select({
+        id: posts.id,
+        title: posts.title,
+        content: posts.content,
+        published: posts.published,
+        createdAt: posts.createdAt,
+        author: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          image: user.image,
+          userType: user.userType,
+        },
+      })
+      .from(posts)
+      .leftJoin(user, eq(posts.authorId, user.id))
+      .orderBy(posts.createdAt);
+
     return NextResponse.json(allPosts);
   } catch (error) {
     console.error("Error fetching posts:", error);
