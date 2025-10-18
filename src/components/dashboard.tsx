@@ -165,11 +165,13 @@ export function Dashboard() {
                       </AvatarFallback>
                     </Avatar>
                     <div>
+                      <div className="flex items-center gap-2">
                       <h3 className="text-xl font-semibold">{user.name}</h3>
-                      <p className="text-muted-foreground">{user.email}</p>
                       <Badge variant="outline" className="mt-1">
                         Prompt Engineer
                       </Badge>
+                      </div>
+                      <p className="text-muted-foreground">{user.email}</p>
                     </div>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
@@ -181,14 +183,6 @@ export function Dashboard() {
                       <div className="text-2xl font-bold text-primary">{posts.length}</div>
                       <div className="text-sm text-muted-foreground">Battles Participated</div>
                     </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" className="flex-1">
-                      Edit Profile
-                    </Button>
-                    <Button variant="outline" className="flex-1">
-                      View Portfolio
-                    </Button>
                   </div>
                   <div className="pt-4 border-t">
                     <h4 className="font-medium mb-2">Quick Actions</h4>
@@ -210,12 +204,12 @@ export function Dashboard() {
       <Card>
         <CardHeader>
           <CardTitle>
-            {user?.userType === "company" ? "Your Battles" : "Your Battles"}
+            {user?.userType === "company" ? "Created by you" : "Contributed to"}
           </CardTitle>
           <CardDescription>
             {user?.userType === "company" 
               ? "Manage and view all the battles you've created."
-              : "View battles you've participated in and your contributions."
+              : "View your contributions."
             }
           </CardDescription>
         </CardHeader>
@@ -240,13 +234,10 @@ export function Dashboard() {
                           <h4 className="text-lg font-medium">{post.title}</h4>
                           <p className="text-muted-foreground">{post.description}</p>
                           <div className="flex items-center gap-2">
-                            <Badge variant="outline">{post.type}</Badge>
+                            <Badge variant="outline">{post.type === "image" ? "Image Prompt" : "Video Prompt"}</Badge>
                             <span className="text-sm text-muted-foreground">
                               {new Date(post.createdAt).toLocaleDateString()}
                             </span>
-                            <Badge variant={post.published ? "default" : "secondary"}>
-                              {post.published ? "Published" : "Draft"}
-                            </Badge>
                           </div>
                         </div>
                   </div>
