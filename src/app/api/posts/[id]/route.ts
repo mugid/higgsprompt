@@ -4,11 +4,11 @@ import { posts, user } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const postId = params.id;
+    const { id: postId } = await params;
 
     const postData = await db
       .select({
@@ -36,6 +36,7 @@ export async function GET(
     }
 
     return NextResponse.json(postData[0]);
+    
   } catch (error) {
     console.error("Error fetching post:", error);
     return NextResponse.json(
