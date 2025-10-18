@@ -1,3 +1,5 @@
+import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -5,9 +7,9 @@ export function Footer() {
       <div className="container mx-auto px-4">
         <div className="grid gap-8 md:grid-cols-4">
           <div className="space-y-4">
-            <div>
-              <span className="font-mono text-lg font-bold text-foreground">higgsprompt</span>
-            </div>
+          <Link href="/" className="md:text-xl text-md font-semibold font-mono flex gap-2 items-center">
+              <Image src="/p-logo.svg" alt="higgsprompt" width={32} height={32} /> higgsprompt
+            </Link>
             <p className="text-sm text-muted-foreground leading-relaxed">
               The competitive marketplace for prompt engineering excellence.
             </p>
