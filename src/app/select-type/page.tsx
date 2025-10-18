@@ -26,7 +26,10 @@ export default function SelectTypePage() {
       });
 
       if (response.ok) {
-        router.push("/dashboard");
+        // Clear any stored user type
+        localStorage.removeItem('selectedUserType');
+        // Force a page refresh to get updated user data
+        window.location.href = "/dashboard";
       } else {
         console.error("Failed to update user type");
       }
@@ -40,10 +43,12 @@ export default function SelectTypePage() {
   if (!session?.user) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Please sign in first</h1>
-          <p className="text-muted-foreground">You need to be signed in to select your account type.</p>
-        </div>
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl">Please sign in first</CardTitle>
+            <CardDescription>You need to be signed in to select your account type.</CardDescription>
+          </CardHeader>
+        </Card>
       </div>
     );
   }

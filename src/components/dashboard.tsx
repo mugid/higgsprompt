@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useSession } from "@/lib/auth-client";
+import { useUserData } from "@/lib/use-user-data";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,11 +18,13 @@ interface Post {
 }
 
 export function Dashboard() {
-  const { data: session } = useSession();
-  const user = session?.user;
+  const { data: user, isPending: userLoading } = useUserData();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [newPost, setNewPost] = useState({ title: "", content: "" });
+
+  // Debug: Log user data
+  console.log("User data:", user);
 
   useEffect(() => {
     fetchPosts();
