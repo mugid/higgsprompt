@@ -65,7 +65,7 @@ export function Dashboard() {
   };
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-3xl font-bold tracking-tight">

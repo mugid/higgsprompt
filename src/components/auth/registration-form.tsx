@@ -68,7 +68,7 @@ export function RegistrationForm({ userType, onBack }: RegistrationFormProps) {
       <CardContent className="space-y-6">
         <div className="space-y-2">
           <Label>Account Type</Label>
-          <Badge variant={userType === "company" ? "outline" : "default"} className="w-full justify-center py-2">
+          <Badge variant="outline" className="w-full justify-center py-2">
             {userType === "prompt_engineer" ? "Prompt Engineer" : "Company"}
           </Badge>
         </div>
