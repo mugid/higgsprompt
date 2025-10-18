@@ -14,7 +14,9 @@ export async function GET(
       .select({
         id: posts.id,
         title: posts.title,
-        content: posts.content,
+        description: posts.description,
+        type: posts.type,
+        images: posts.images,
         published: posts.published,
         createdAt: posts.createdAt,
         author: {

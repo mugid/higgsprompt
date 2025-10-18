@@ -72,14 +72,37 @@ export const verification = pgTable("verification", {
   ),
 });
 
+export const postTypeEnum = pgEnum("post_type", ["image", "video"]);
+
 export const posts = pgTable("posts", {
   id: text("id").primaryKey(),
   title: text("title").notNull(),
-  content: text("content"),
+  description: text("description").notNull(),
+  type: postTypeEnum("type").default("image"),
+  images: text("images").array(), // Array of image URLs from UploadThing
   authorId: text("author_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-  published: boolean("published").default(false).notNull(),
+  published: boolean("published").default(true).notNull(),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+  updatedAt: timestamp("updated_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export const solutions = pgTable("solutions", {
+  id: text("id").primaryKey(),
+  text: text("text").notNull(),
+  modelName: text("model_name").notNull(),
+  mediaContent: text("media_content").array(), // Array of media URLs from UploadThing
+  authorId: text("author_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  postId: text("post_id")
+    .notNull()
+    .references(() => posts.id, { onDelete: "cascade" }),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
@@ -94,4 +117,5 @@ export const schema = {
   account,
   verification,
   posts,
+  solutions,
 };

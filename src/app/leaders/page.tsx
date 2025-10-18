@@ -83,7 +83,7 @@ export default function LeadersPage() {
       <div className="p-8">
         <div className="max-w-6xl mx-auto space-y-8">
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold">🏆 Leaders Board</h1>
+          <h1 className="text-4xl font-bold">Leaderboard</h1>
           <p className="text-muted-foreground text-lg">
             Top prompt engineers ranked by their points and contributions
           </p>
@@ -165,26 +165,26 @@ export default function LeadersPage() {
         {leaders.length > 0 && (
           <Card>
             <CardHeader>
-              <CardTitle>How Points Work</CardTitle>
+              <CardTitle>Why points matter?</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid md:grid-cols-3 gap-4 text-sm">
                 <div className="space-y-2">
-                  <h4 className="font-medium">Quality Prompts</h4>
+                  <h4 className="font-medium">Prompt engineers</h4>
                   <p className="text-muted-foreground">
-                    Earn points for creating high-quality, useful prompts that help the community.
+                    You can find cracked prompt engineers to hire
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-medium">Community Engagement</h4>
+                  <h4 className="font-medium">Community engagement</h4>
                   <p className="text-muted-foreground">
-                    Get rewarded for helping others and contributing to discussions.
+                    Being first is always better than being last
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <h4 className="font-medium">Innovation</h4>
+                  <h4 className="font-medium">Trustworthiness</h4>
                   <p className="text-muted-foreground">
-                    Bonus points for creative and innovative prompt engineering techniques.
+                    You know who is worthy to be trusted
                   </p>
                 </div>
               </div>

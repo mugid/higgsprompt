@@ -10,7 +10,9 @@ export async function GET() {
       .select({
         id: posts.id,
         title: posts.title,
-        content: posts.content,
+        description: posts.description,
+        type: posts.type,
+        images: posts.images,
         published: posts.published,
         createdAt: posts.createdAt,
         author: {
@@ -42,11 +44,11 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, content } = await request.json();
+    const { title, description, type, images } = await request.json();
 
-    if (!title || !content) {
+    if (!title || !description || !type) {
       return NextResponse.json(
-        { error: "Title and content are required" },
+        { error: "Title, description, and type are required" },
         { status: 400 }
       );
     }
@@ -56,7 +58,9 @@ export async function POST(request: NextRequest) {
       .values({
         id: crypto.randomUUID(),
         title,
-        content,
+        description,
+        type,
+        images: images || [],
         authorId: session.user.id,
         published: false,
       })

@@ -7,11 +7,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ArrowLeft, Clock, User, MessageCircle, ThumbsUp, Share } from "lucide-react";
+import { SolutionsSection } from "@/components/solutions-section";
 
 interface Post {
   id: string;
   title: string;
-  content: string;
+  description: string;
+  type: string;
+  images: string[];
   published: boolean;
   createdAt: string;
   author: {
@@ -126,9 +129,25 @@ export default function PostPage() {
           <CardContent>
             <div className="prose prose-gray max-w-none">
               <div className="whitespace-pre-wrap text-base leading-relaxed">
-                {post.content}
+                {post.description}
               </div>
             </div>
+            
+            {post.images && post.images.length > 0 && (
+              <div className="mt-6">
+                <h4 className="font-medium mb-3">Battle Images</h4>
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                  {post.images.map((image, index) => (
+                    <img
+                      key={index}
+                      src={image}
+                      alt={`Battle image ${index + 1}`}
+                      className="w-full h-48 object-cover rounded border"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
 
@@ -162,48 +181,8 @@ export default function PostPage() {
           </CardContent>
         </Card>
 
-        {/* Actions */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Battle Actions</CardTitle>
-            <CardDescription>
-              Engage with this battle and help the community
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-wrap gap-4">
-              <Button className="flex items-center gap-2">
-                <ThumbsUp className="w-4 h-4" />
-                Like Battle
-              </Button>
-              <Button variant="outline" className="flex items-center gap-2">
-                <MessageCircle className="w-4 h-4" />
-                Comment
-              </Button>
-              <Button variant="outline" className="flex items-center gap-2">
-                <Share className="w-4 h-4" />
-                Share
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Comments Section */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Battle Discussion</CardTitle>
-            <CardDescription>
-              Share your thoughts and solutions with the community
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="text-center py-8 text-muted-foreground">
-              <MessageCircle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p>Comments feature coming soon!</p>
-              <p className="text-sm">Share your thoughts and solutions with the community.</p>
-            </div>
-          </CardContent>
-        </Card>
+        {/* Solutions Section */}
+        <SolutionsSection postId={post.id} />
         </div>
       </div>
     </div>
