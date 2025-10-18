@@ -20,12 +20,9 @@ export function RegistrationForm({ userType, onBack }: RegistrationFormProps) {
   const handleGoogleSignUp = async () => {
     setIsLoading(true);
     try {
-      // Store user type in localStorage for the callback
-      localStorage.setItem('selectedUserType', userType);
-      
       await signIn.social({
         provider: "google",
-        callbackURL: "/api/auth/callback",
+        callbackURL: `/api/auth/callback?userType=${encodeURIComponent(userType)}`,
       });
     } catch (error) {
       console.error("Registration failed:", error);

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useUserData } from "@/lib/use-user-data";
+import { useUserWithFields } from "@/lib/use-user-with-fields";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,7 +18,7 @@ interface Post {
 }
 
 export function Dashboard() {
-  const { data: user, isPending: userLoading } = useUserData();
+  const { data: user, isPending: userLoading } = useUserWithFields();
   const [posts, setPosts] = useState<Post[]>([]);
   const [loading, setLoading] = useState(true);
   const [newPost, setNewPost] = useState({ title: "", content: "" });

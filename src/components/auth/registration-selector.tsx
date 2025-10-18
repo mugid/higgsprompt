@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 
 interface RegistrationSelectorProps {
-  onSelectUserType: (userType: "prompt_engineer" | "company") => void;
+  onSelectUserType?: (userType: "prompt_engineer" | "company") => void;
 }
 
 export function RegistrationSelector({ onSelectUserType }: RegistrationSelectorProps) {
@@ -48,7 +48,7 @@ export function RegistrationSelector({ onSelectUserType }: RegistrationSelectorP
               </div>
             </div>
             <Button 
-              onClick={() => onSelectUserType("prompt_engineer")}
+              onClick={() => onSelectUserType ? onSelectUserType("prompt_engineer") : window.location.href = "/register?type=prompt_engineer"}
               className="w-full mt-4"
             >
               I am a Prompt Engineer
@@ -85,7 +85,7 @@ export function RegistrationSelector({ onSelectUserType }: RegistrationSelectorP
               </div>
             </div>
             <Button 
-              onClick={() => onSelectUserType("company")}
+              onClick={() => onSelectUserType ? onSelectUserType("company") : window.location.href = "/register?type=company"}
               variant="outline"
               className="w-full mt-4"
             >

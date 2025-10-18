@@ -14,20 +14,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
-    // Check if user already has a userType set
-    const existingUser = await db
-      .select()
-      .from(user)
-      .where(eq(user.id, session.user.id))
-      .limit(1);
-
-    if (existingUser.length > 0 && existingUser[0].userType) {
-      // User already has a type, redirect to dashboard
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+    // Get user type from URL params
+    const url = new URL(request.url);
+    const userTypeParam = url.searchParams.get('userType');
+    
+    if (userTypeParam && ["prompt_engineer", "company"].includes(userTypeParam)) {
+      // Update user with the selected type
+      await db
+        .update(user)
+        .set({ userType: userTypeParam as "prompt_engineer" | "company" })
+        .where(eq(user.id, session.user.id));
     }
 
-    // If user doesn't have a type yet, redirect to type selection
-    return NextResponse.redirect(new URL("/select-type", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   } catch (error) {
     console.error("Auth callback error:", error);
     return NextResponse.redirect(new URL("/", request.url));
