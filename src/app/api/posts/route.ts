@@ -6,24 +6,25 @@ import { eq } from "drizzle-orm";
 
 export async function GET() {
   try {
-    const allPosts = await db
-      .select({
-        id: posts.id,
-        title: posts.title,
-        description: posts.description,
-        type: posts.type,
-        images: posts.images,
-        ideas: posts.ideas,
-        published: posts.published,
-        createdAt: posts.createdAt,
-        author: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          userType: user.userType,
-        },
-      })
+        const allPosts = await db
+          .select({
+            id: posts.id,
+            title: posts.title,
+            description: posts.description,
+            type: posts.type,
+            images: posts.images,
+            ideas: posts.ideas,
+            companyWords: posts.companyWords,
+            published: posts.published,
+            createdAt: posts.createdAt,
+            author: {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              image: user.image,
+              userType: user.userType,
+            },
+          })
       .from(posts)
       .leftJoin(user, eq(posts.authorId, user.id))
       .orderBy(posts.createdAt);
@@ -45,28 +46,29 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, description, type, images, ideas } = await request.json();
+        const { title, description, type, images, ideas, companyWords } = await request.json();
 
-    if (!title || !description || !type) {
-      return NextResponse.json(
-        { error: "Title, description, and type are required" },
-        { status: 400 }
-      );
-    }
+        if (!title || !description || !type) {
+          return NextResponse.json(
+            { error: "Title, description, and type are required" },
+            { status: 400 }
+          );
+        }
 
-    const newPost = await db
-      .insert(posts)
-      .values({
-        id: crypto.randomUUID(),
-        title,
-        description,
-        type,
-        images: images || [],
-        ideas: ideas || null,
-        authorId: session.user.id,
-        published: false,
-      })
-      .returning();
+        const newPost = await db
+          .insert(posts)
+          .values({
+            id: crypto.randomUUID(),
+            title,
+            description,
+            type,
+            images: images || [],
+            ideas: ideas || null,
+            companyWords: companyWords || null,
+            authorId: session.user.id,
+            published: false,
+          })
+          .returning();
 
     return NextResponse.json(newPost[0]);
   } catch (error) {

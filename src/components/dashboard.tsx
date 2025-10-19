@@ -19,6 +19,7 @@ interface Post {
   type: string;
   images: string[];
   ideas?: string;
+  companyWords?: string;
   published: boolean;
   createdAt: string;
 }
@@ -32,7 +33,8 @@ export function Dashboard() {
     description: "", 
     type: "image" as "image" | "video",
     images: [] as string[],
-    ideas: ""
+    ideas: "",
+    companyWords: ""
   });
   const [generatingIdeas, setGeneratingIdeas] = useState(false);
 
@@ -71,6 +73,7 @@ export function Dashboard() {
             name: newPost.title,
             description: newPost.description,
           },
+          company_words: newPost.companyWords || "",
         }),
       });
 
@@ -99,7 +102,7 @@ export function Dashboard() {
       });
 
       if (response.ok) {
-        setNewPost({ title: "", description: "", type: "image", images: [], ideas: "" });
+        setNewPost({ title: "", description: "", type: "image", images: [], ideas: "", companyWords: "" });
         fetchPosts();
       }
     } catch (error) {
@@ -157,6 +160,16 @@ export function Dashboard() {
                       onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
                       placeholder="Describe the your product..."
                       rows={4}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="companyWords">Your suggestions (Optional)</Label>
+                    <Input
+                      id="companyWords"
+                      value={newPost.companyWords}
+                      onChange={(e) => setNewPost({ ...newPost, companyWords: e.target.value })}
+                      placeholder="What do you want to see in the advertisement?"
                     />
                   </div>
                   

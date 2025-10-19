@@ -16,6 +16,7 @@ interface Post {
   type: string;
   images: string[];
   ideas?: string;
+  companyWords?: string;
   published: boolean;
   createdAt: string;
   author: {
@@ -129,6 +130,15 @@ export default function PostPage() {
                 <h3 className="text-lg font-semibold mb-2">AI Generated Ideas</h3>
                 <div className="whitespace-pre-wrap text-sm text-muted-foreground leading-relaxed">
                   {post.ideas}
+                </div>
+              </div>
+            )}
+            
+            {post.companyWords && (
+              <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <h3 className="text-lg font-semibold mb-2 text-blue-900 dark:text-blue-100">Company suggestions</h3>
+                <div className="whitespace-pre-wrap text-sm text-blue-800 dark:text-blue-200 leading-relaxed">
+                  {post.companyWords}
                 </div>
               </div>
             )}

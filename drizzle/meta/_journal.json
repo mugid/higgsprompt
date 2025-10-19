@@ -43,6 +43,13 @@
       "when": 1760853026905,
       "tag": "0005_short_black_widow",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1760855691301,
+      "tag": "0006_warm_amazoness",
+      "breakpoints": true
     }
   ]
 }

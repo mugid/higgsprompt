@@ -10,25 +10,26 @@ export async function GET(
   try {
     const { id: postId } = await params;
 
-    const postData = await db
-      .select({
-        id: posts.id,
-        title: posts.title,
-        description: posts.description,
-        type: posts.type,
-        images: posts.images,
-        ideas: posts.ideas,
-        published: posts.published,
-        createdAt: posts.createdAt,
-        author: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          image: user.image,
-          userType: user.userType,
-          points: user.points,
-        },
-      })
+        const postData = await db
+          .select({
+            id: posts.id,
+            title: posts.title,
+            description: posts.description,
+            type: posts.type,
+            images: posts.images,
+            ideas: posts.ideas,
+            companyWords: posts.companyWords,
+            published: posts.published,
+            createdAt: posts.createdAt,
+            author: {
+              id: user.id,
+              name: user.name,
+              email: user.email,
+              image: user.image,
+              userType: user.userType,
+              points: user.points,
+            },
+          })
       .from(posts)
       .leftJoin(user, eq(posts.authorId, user.id))
       .where(eq(posts.id, postId))

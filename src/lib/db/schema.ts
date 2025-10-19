@@ -81,6 +81,7 @@ export const posts = pgTable("posts", {
   type: postTypeEnum("type").default("image"),
   images: text("images").array(), 
   ideas: text("ideas"), 
+  companyWords: text("company_words"), // Optional company words field
   authorId: text("author_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
