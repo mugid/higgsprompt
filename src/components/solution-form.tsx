@@ -36,9 +36,9 @@ const MODELS: Model[] = [
   { id: "seedance-v1-lite-t2v", name: "Seedance 1.0 Lite", category: "text-to-video" },
   
   // Image-to-video models
-  { id: "kling-2.5-turbo", name: "Kling 2.5 Turbo", category: "image-to-video" },
-  { id: "minimax-hailuo-02-video", name: "Minimax Hailuo 02", category: "image-to-video" },
-  { id: "veo-3", name: "Veo 3", category: "image-to-video" },
+  { id: "kling-2-5-turbo", name: "Kling 2.5 Turbo", category: "image-to-video" },
+  { id: "minimax-t2v", name: "Minimax Hailuo 02", category: "image-to-video" },
+  { id: "veo-3-fast", name: "Veo 3", category: "image-to-video" },
   { id: "wan-25-fast", name: "Wan 2.5 Fast", category: "image-to-video" },
 ];
 
