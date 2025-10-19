@@ -105,37 +105,26 @@ export default function PostPage() {
             <div className="flex items-start justify-between">
               <div className="space-y-2">
                 <CardTitle className="text-3xl">{post.title}</CardTitle>
-                <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <User className="w-4 h-4" />
-                    <span>{post.author.name}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                  </div>
-                </div>
               </div>
               <div className="flex items-center gap-2">
-                <Badge variant={post.published ? "default" : "secondary"}>
-                  {post.published ? "Published" : "Draft"}
+                <Badge>
+                  {post.type === "image" ? "Image Prompt" : "Video Prompt"}
                 </Badge>
                 <Badge variant="outline">
-                  {post.author.userType === "prompt_engineer" ? "Engineer" : "Company"}
+                {new Date(post.createdAt).toLocaleDateString()}
                 </Badge>
               </div>
             </div>
           </CardHeader>
           <CardContent>
             <div className="prose prose-gray max-w-none">
-              <div className="whitespace-pre-wrap text-base leading-relaxed">
+              <div className="whitespace-pre-wrap text-base text-muted-foreground leading-relaxed">
                 {post.description}
               </div>
             </div>
             
             {post.images && post.images.length > 0 && (
               <div className="mt-6">
-                <h4 className="font-medium mb-3">Battle Images</h4>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                   {post.images.map((image, index) => (
                     <img
@@ -167,15 +156,6 @@ export default function PostPage() {
               <div className="flex-1">
                 <h3 className="text-xl font-semibold">{post.author.name}</h3>
                 <p className="text-muted-foreground">{post.author.email}</p>
-                <div className="flex items-center gap-4 mt-2">
-                  <Badge variant="outline" className="flex items-center gap-1">
-                    <span className="w-2 h-2 bg-primary rounded-full"></span>
-                    {post.author.points} points
-                  </Badge>
-                  <Badge variant="secondary">
-                    {post.author.userType === "prompt_engineer" ? "Prompt Engineer" : "Company"}
-                  </Badge>
-                </div>
               </div>
             </div>
           </CardContent>

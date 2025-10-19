@@ -9,6 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { UploadButton } from "@/components/uploadthing-provider";
+import { X } from "lucide-react";
 
 interface Post {
   id: string;
@@ -134,12 +136,93 @@ export function Dashboard() {
                       onChange={(e) => setNewPost({ ...newPost, type: e.target.value as "image" | "video" })}
                       className="w-full p-2 border rounded-md"
                     >
-                      <option value="image">Image-based Battle</option>
-                      <option value="video">Video-based Battle</option>
+                      <option value="image">Image Generation</option>
+                      <option value="video">Video Generation</option>
                     </select>
                   </div>
+                  
+                  <div className="space-y-3">
+                    <Label className="text-sm font-medium">Competition Images</Label>
+                    <div className="space-y-3">
+                      <div className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-6 text-center hover:border-muted-foreground/50 transition-colors">
+                        <UploadButton
+                          endpoint="imageUploader"
+                          onClientUploadComplete={(res) => {
+                            if (res) {
+                              const urls = res.map(file => file.url);
+                              setNewPost(prev => ({
+                                ...prev,
+                                images: [...prev.images, ...urls]
+                              }));
+                            }
+                          }}
+                          onUploadError={(error) => {
+                            console.error("Upload error:", error);
+                          }}
+                          className="w-full h-auto bg-transparent hover:bg-muted/50 border-0 text-muted-foreground hover:text-foreground transition-colors"
+                        />
+                        <p className="text-sm text-muted-foreground mt-2">
+                          Click to upload or drag and drop images here
+                        </p>
+                        <p className="text-xs text-muted-foreground/70 mt-1">
+                          PNG, JPG, GIF up to 4MB each
+                        </p>
+                      </div>
+                      
+                      {newPost.images.length > 0 && (
+                        <div className="space-y-3">
+                          <div className="flex items-center justify-between">
+                            <p className="text-sm font-medium">Uploaded Images ({newPost.images.length})</p>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setNewPost(prev => ({ ...prev, images: [] }))}
+                              className="text-xs"
+                            >
+                              Clear All
+                            </Button>
+                          </div>
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                            {newPost.images.map((image, index) => (
+                              <div key={index} className="relative group bg-muted rounded-lg overflow-hidden">
+                                <div className="aspect-video relative">
+                                  <img
+                                    src={image}
+                                    alt={`Competition image ${index + 1}`}
+                                    className="w-full h-full object-cover"
+                                  />
+                                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors" />
+                                  <Button
+                                    type="button"
+                                    variant="destructive"
+                                    size="sm"
+                                    className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-200 transform scale-90 group-hover:scale-100"
+                                    onClick={() => {
+                                      setNewPost(prev => ({
+                                        ...prev,
+                                        images: prev.images.filter((_, i) => i !== index)
+                                      }));
+                                    }}
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </Button>
+                                </div>
+                                <div className="p-2">
+                                  <p className="text-xs text-muted-foreground truncate">
+                                    Image {index + 1}
+                                  </p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  
                   <Button type="submit" className="w-full">
-                    Create Battle
+                    Create Competition
                   </Button>
                 </form>
               </CardContent>
