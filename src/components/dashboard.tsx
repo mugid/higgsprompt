@@ -34,7 +34,6 @@ export function Dashboard() {
   });
 
   // Debug: Log user data
-  console.log("User data:", user);
 
   useEffect(() => {
     fetchPosts();
@@ -257,15 +256,12 @@ export function Dashboard() {
                       <p className="text-muted-foreground">{user.email}</p>
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div>
                     <div className="text-center p-4 bg-muted rounded-lg">
                       <div className="text-2xl font-bold text-primary">{user.points || 0}</div>
                       <div className="text-sm text-muted-foreground">Points Earned</div>
                     </div>
-                    <div className="text-center p-4 bg-muted rounded-lg">
-                      <div className="text-2xl font-bold text-primary">{posts.length}</div>
-                      <div className="text-sm text-muted-foreground">Battles Participated</div>
-                    </div>
+
                   </div>
                   <div className="pt-4 border-t">
                     <h4 className="font-medium mb-2">Quick Actions</h4>

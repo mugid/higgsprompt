@@ -2,8 +2,10 @@
 
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-import { AsciiAnimation } from "@/components/ascii-animation";
+import { PixelatedCanvas } from "@/components/ui/pixelated-canvas";
+import Link from "next/link";
 import { motion } from "motion/react";
+import { BackgroundRippleEffect } from "@/components/ui/background-ripple-effect";
 
 export function HeroSection() {
   return (
@@ -14,12 +16,12 @@ export function HeroSection() {
       className="relative overflow-hidden pt-32 pb-20"
     >
       <div className="absolute" />
-
-      <div className="container relative mx-auto px-4">
+      <BackgroundRippleEffect />
+      <div className="container relative mx-auto px-4 z-10">
         <div className="flex flex-col justify-center  text-center gap-y-12">
           <div className="space-y-8">
             <h1 className="text-balance font-bold text-5xl leading-tight tracking-tight text-foreground lg:text-6xl">
-              Perfect prompts and engineers for Your Products
+              Perfect prompts and engineers for your products
             </h1>
 
             <div className="flex flex-col gap-4 items-center justify-center sm:flex-row">
@@ -27,7 +29,7 @@ export function HeroSection() {
                 size="lg"
                 className="bg-primary text-primary-foreground hover:bg-primary/90 group"
               >
-                Post a Challenge
+                <Link href="/battles">Post a Challenge</Link>
                 <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Button>
               <Button
@@ -35,24 +37,33 @@ export function HeroSection() {
                 variant="outline"
                 className="border-border text-foreground hover:bg-secondary bg-transparent"
               >
-                Browse Challenges
+                <Link href="/battles">Browse Challenges</Link>
               </Button>
             </div>
           </div>
 
-          <div className="relative">
-            <div className="rounded-lg border border-border/50 bg-card p-6 shadow-2xl">
-              <div className="mb-4 flex items-center gap-2">
-                <div className="h-3 w-3 rounded-full bg-destructive" />
-                <div className="h-3 w-3 rounded-full bg-[#f59e0b]" />
-                <div className="h-3 w-3 rounded-full bg-[#10b981]" />
-                <span className="ml-auto font-mono text-xs text-muted-foreground">
-                  prompt-generator.ai
-                </span>
-              </div>
-              <AsciiAnimation />
-            </div>
-            <div className="absolute -bottom-4 -right-4 -z-10 h-72 w-72 rounded-full bg-primary/20 blur-3xl" />
+          <div className="relative mx-auto">
+            <PixelatedCanvas
+              src="./keyboard.jpeg"
+              cellSize={3}
+              dotScale={0.9}
+              width={1000}
+              height={300}
+              shape="square"
+              backgroundColor="#000000"
+              dropoutStrength={0.4}
+              interactive
+              distortionStrength={1}
+              distortionRadius={80}
+              distortionMode="swirl"
+              followSpeed={0.2}
+              jitterStrength={4}
+              jitterSpeed={4}
+              sampleAverage
+              tintColor="#FFFFFF"
+              tintStrength={0.2}
+              className="rounded-xl border border-neutral-800 shadow-lg"
+            />
           </div>
         </div>
       </div>

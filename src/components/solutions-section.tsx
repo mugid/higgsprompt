@@ -5,7 +5,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { Clock, User, Bot } from "lucide-react";
+import { Clock, Bot, Heart, X, ZoomIn } from "lucide-react";
 import { SolutionForm } from "./solution-form";
 import { useUserWithFields } from "@/lib/use-user-with-fields";
 
@@ -14,6 +14,9 @@ interface Solution {
   text: string;
   modelName: string;
   mediaContent: string[];
+  likes: number;
+  isLiked: boolean;
+  canLike: boolean;
   createdAt: string;
   author: {
     id: string;
@@ -27,12 +30,14 @@ interface Solution {
 
 interface SolutionsSectionProps {
   postId: string;
+  postType: "image" | "video";
 }
 
-export function SolutionsSection({ postId }: SolutionsSectionProps) {
+export function SolutionsSection({ postId, postType }: SolutionsSectionProps) {
   const { data: user } = useUserWithFields();
   const [solutions, setSolutions] = useState<Solution[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   useEffect(() => {
     fetchSolutions();
@@ -52,28 +57,59 @@ export function SolutionsSection({ postId }: SolutionsSectionProps) {
     }
   };
 
-  const handleSolutionSubmit = async (solution: {
-    text: string;
-    modelName: string;
-    mediaContent: string[];
-  }) => {
+      const handleSolutionSubmit = async (solution: {
+        text: string;
+        modelName: string;
+        mediaContent: string[];
+      }) => {
+        try {
+          const response = await fetch("/api/solutions", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              ...solution,
+              postId,
+            }),
+          });
+
+          if (response.ok) {
+            // Refresh solutions immediately
+            await fetchSolutions();
+            // Also trigger a re-render by updating state
+            setSolutions(prev => [...prev]);
+          }
+        } catch (error) {
+          console.error("Failed to submit solution:", error);
+        }
+      };
+
+  const handleLike = async (solutionId: string, isLiked: boolean) => {
     try {
-      const response = await fetch("/api/solutions", {
-        method: "POST",
+      const response = await fetch(`/api/solutions/${solutionId}/like`, {
+        method: isLiked ? "DELETE" : "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...solution,
-          postId,
-        }),
       });
 
       if (response.ok) {
-        fetchSolutions(); // Refresh solutions
+        // Update the solution in the local state
+        setSolutions(prev => 
+          prev.map(solution => 
+            solution.id === solutionId 
+              ? { 
+                  ...solution, 
+                  isLiked: !isLiked, 
+                  likes: isLiked ? solution.likes - 1 : solution.likes + 1 
+                }
+              : solution
+          )
+        );
       }
     } catch (error) {
-      console.error("Failed to submit solution:", error);
+      console.error("Error toggling like:", error);
     }
   };
 
@@ -102,7 +138,7 @@ export function SolutionsSection({ postId }: SolutionsSectionProps) {
 
       {/* Solution Form - Only for Prompt Engineers */}
       {user?.userType === "prompt_engineer" && (
-        <SolutionForm postId={postId} onSolutionSubmit={handleSolutionSubmit} />
+        <SolutionForm postId={postId} postType={postType} onSolutionSubmit={handleSolutionSubmit} />
       )}
 
       {/* Solutions List */}
@@ -135,18 +171,14 @@ export function SolutionsSection({ postId }: SolutionsSectionProps) {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Bot className="w-4 h-4" />
                         <span>{solution.modelName}</span>
-                        <span>•</span>
                         <Clock className="w-4 h-4" />
-                        <span>{new Date(solution.createdAt).toLocaleDateString()}</span>
+                        <span></span>
                       </div>
                     </div>
                   </div>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline">
-                      {solution.author.userType === "prompt_engineer" ? "Engineer" : "Company"}
-                    </Badge>
-                    <Badge variant="secondary">
-                      {solution.author.points} points
+                    {new Date(solution.createdAt).toLocaleDateString()}
                     </Badge>
                   </div>
                 </div>
@@ -156,25 +188,109 @@ export function SolutionsSection({ postId }: SolutionsSectionProps) {
                   <p className="whitespace-pre-wrap">{solution.text}</p>
                   
                   {solution.mediaContent.length > 0 && (
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium">Media Content:</p>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                    <div className="space-y-3">
+                      <p className="text-sm font-medium text-muted-foreground">Generated Media:</p>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                         {solution.mediaContent.map((url, index) => (
-                          <div key={index} className="relative">
-                            <img
-                              src={url}
-                              alt={`Solution media ${index + 1}`}
-                              className="w-full h-32 object-cover rounded border"
-                            />
+                          <div key={index} className="relative group">
+                            {url.includes('.mp4') || url.includes('video') || solution.modelName.includes('video') ? (
+                              <div className="relative bg-black rounded-lg overflow-hidden shadow-lg">
+                                <video
+                                  src={url}
+                                  controls
+                                  className="w-full h-64 sm:h-56 lg:h-64 object-cover"
+                                  preload="metadata"
+                                  poster=""
+                                >
+                                  Your browser does not support the video tag.
+                                </video>
+                                <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                  Video
+                                </div>
+                              </div>
+                            ) : (
+                              <div className="relative bg-muted rounded-lg overflow-hidden shadow-lg cursor-pointer">
+                                <img
+                                  src={url}
+                                  alt={`Generated image ${index + 1}`}
+                                  className="w-full h-64 sm:h-56 lg:h-64 object-cover group-hover:scale-105 transition-transform duration-300"
+                                  onClick={() => setSelectedImage(url)}
+                                />
+                                <div className="absolute top-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
+                                  Image
+                                </div>
+                                <div className="absolute top-2 left-2 bg-black/70 text-white p-1 rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                  <ZoomIn className="w-3 h-3" />
+                                </div>
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors duration-300" />
+                              </div>
+                            )}
                           </div>
                         ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {/* Like Button - Only show for post creators */}
+                  {solution.canLike && (
+                    <div className="flex items-center justify-between pt-4 border-t">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleLike(solution.id, solution.isLiked)}
+                        className={`flex items-center gap-2 ${
+                          solution.isLiked 
+                            ? "text-red-500 hover:text-red-600" 
+                            : "text-muted-foreground hover:text-red-500"
+                        }`}
+                      >
+                        <Heart 
+                          className={`w-4 h-4 ${
+                            solution.isLiked ? "fill-current" : ""
+                          }`} 
+                        />
+                        <span>{solution.likes}</span>
+                      </Button>
+                    </div>
+                  )}
+                  
+                  {/* Show likes count for everyone, but only show like button for post creators */}
+                  {!solution.canLike && (
+                    <div className="flex items-center justify-between pt-4 border-t">
+                      <div className="flex items-center gap-2 text-muted-foreground">
+                        <Heart className="w-4 h-4" />
+                        <span>{solution.likes} likes</span>
                       </div>
                     </div>
                   )}
                 </div>
               </CardContent>
             </Card>
-          ))}
+          )          )}
+        </div>
+      )}
+
+      {/* Full-screen Image Modal */}
+      {selectedImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-7xl max-h-full">
+            <img
+              src={selectedImage}
+              alt="Full size image"
+              className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            />
+            <Button
+              variant="ghost"
+              size="sm"
+              className="absolute top-4 right-4 bg-black/50 hover:bg-black/70 text-white"
+              onClick={() => setSelectedImage(null)}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       )}
     </div>

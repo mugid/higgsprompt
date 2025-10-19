@@ -162,7 +162,7 @@ export default function PostPage() {
         </Card>
 
         {/* Solutions Section */}
-        <SolutionsSection postId={post.id} />
+        <SolutionsSection postId={post.id} postType={post.type as "image" | "video"} />
         </div>
       </div>
     </div>

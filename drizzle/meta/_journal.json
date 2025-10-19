@@ -29,6 +29,13 @@
       "when": 1760828816223,
       "tag": "0003_good_hulk",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1760837369320,
+      "tag": "0004_smart_santa_claus",
+      "breakpoints": true
     }
   ]
 }

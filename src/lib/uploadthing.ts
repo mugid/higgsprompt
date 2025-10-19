@@ -9,12 +9,10 @@ export const ourFileRouter = {
       // You can add authentication logic here if needed
       return { userId: "anonymous" };
     })
-    .onUploadComplete(async ({ metadata, file }) => {
-      // This code RUNS ON YOUR SERVER after upload
-      console.log("Upload complete for userId:", metadata.userId);
-      console.log("file url", file.url);
-      return { uploadedBy: metadata.userId };
-    }),
+        .onUploadComplete(async ({ metadata, file }) => {
+          // This code RUNS ON YOUR SERVER after upload
+          return { uploadedBy: metadata.userId };
+        }),
 
   mediaUploader: f({ 
     image: { maxFileSize: "4MB", maxFileCount: 5 },
@@ -24,12 +22,10 @@ export const ourFileRouter = {
       // This code runs on your server before upload
       return { userId: "anonymous" };
     })
-    .onUploadComplete(async ({ metadata, file }) => {
-      // This code RUNS ON YOUR SERVER after upload
-      console.log("Media upload complete for userId:", metadata.userId);
-      console.log("file url", file.url);
-      return { uploadedBy: metadata.userId };
-    }),
+        .onUploadComplete(async ({ metadata, file }) => {
+          // This code RUNS ON YOUR SERVER after upload
+          return { uploadedBy: metadata.userId };
+        }),
 } satisfies FileRouter;
 
 export type OurFileRouter = typeof ourFileRouter;

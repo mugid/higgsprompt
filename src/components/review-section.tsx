@@ -1,3 +1,5 @@
+"use client";
+
 import { Card } from "@/components/ui/card"
 import { Star, Quote } from "lucide-react"
 

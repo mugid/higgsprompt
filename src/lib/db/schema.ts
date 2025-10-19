@@ -97,6 +97,7 @@ export const solutions = pgTable("solutions", {
   text: text("text").notNull(),
   modelName: text("model_name").notNull(),
   mediaContent: text("media_content").array(), // Array of media URLs from UploadThing
+  likes: integer("likes").default(0).notNull(),
   authorId: text("author_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
@@ -111,6 +112,19 @@ export const solutions = pgTable("solutions", {
     .notNull(),
 });
 
+export const solutionLikes = pgTable("solution_likes", {
+  id: text("id").primaryKey(),
+  solutionId: text("solution_id")
+    .notNull()
+    .references(() => solutions.id, { onDelete: "cascade" }),
+  userId: text("user_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at")
+    .$defaultFn(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
 export const schema = {
   user,
   session,
@@ -118,4 +132,5 @@ export const schema = {
   verification,
   posts,
   solutions,
+  solutionLikes,
 };
