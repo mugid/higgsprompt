@@ -80,7 +80,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 pt-8 border-t border-border text-center text-sm text-muted-foreground">
-          © 2025 higgsprompt. All rights reserved.
+          <a href="https://github.com/sultantemuruly/higgsfield_swe_hackathon/tree/main" target="_blank" className="text-muted-foreground hover:text-foreground transition-colors">Link to github of fastAPI</a>
         </div>
       </div>
     </footer>
