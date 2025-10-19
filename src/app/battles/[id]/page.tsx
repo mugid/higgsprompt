@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { ArrowLeft, Clock, User, MessageCircle, ThumbsUp, Share } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import { SolutionsSection } from "@/components/solutions-section";
 
 interface Post {
@@ -15,6 +15,7 @@ interface Post {
   description: string;
   type: string;
   images: string[];
+  ideas?: string;
   published: boolean;
   createdAt: string;
   author: {
@@ -122,6 +123,15 @@ export default function PostPage() {
                 {post.description}
               </div>
             </div>
+            
+            {post.ideas && (
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg border">
+                <h3 className="text-lg font-semibold mb-2">AI Generated Ideas</h3>
+                <div className="whitespace-pre-wrap text-sm text-muted-foreground leading-relaxed">
+                  {post.ideas}
+                </div>
+              </div>
+            )}
             
             {post.images && post.images.length > 0 && (
               <div className="mt-6">

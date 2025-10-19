@@ -157,6 +157,9 @@ export function SolutionForm({ postId, postType, onSolutionSubmit }: SolutionFor
           setModelName("");
           setUploadedFiles([]);
           setApiError(null);
+          
+          // Refresh the page to show the new solution
+          window.location.reload();
     } catch (error) {
       console.error("Failed to submit solution:", error);
       setApiError(`Submission failed: ${error instanceof Error ? error.message : 'Unknown error'}`);

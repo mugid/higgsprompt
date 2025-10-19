@@ -15,8 +15,8 @@ export async function POST(request: NextRequest) {
 
     // Determine the generation type based on model
     const isImageModel = model === "nano-banana" || model === "seedream";
-    const isImageToVideoModel = model === "wan-25-fast";
-    const isTextToVideoModel = model.includes("kling") || model.includes("minimax") || model.includes("seedance") || model.includes("veo");
+    const isImageToVideoModel = model === "kling-2.5-turbo" || model === "minimax-hailuo-02-video" || model === "veo-3" || model === "wan-25-fast";
+    const isTextToVideoModel = model === "minimax-t2v" || model === "seedance-v1-lite-t2v";
     
     let endpoint = "";
     let requestBody = {};
@@ -49,7 +49,7 @@ export async function POST(request: NextRequest) {
       };
     } else if (isTextToVideoModel) {
       // Use text-to-video endpoint for video models
-      endpoint = `${API_BASE_URL}/text-to-video/text-to-video/generate`;
+      endpoint = `${API_BASE_URL}/text-to-video/generate`;
       requestBody = {
         model: model,
         params: {
@@ -57,8 +57,9 @@ export async function POST(request: NextRequest) {
           prompt: prompt,
           input_images: [],
           aspect_ratio: "16:9",
-          resolution: "720",
-          duration: 5, // Required parameter for text-to-video (5 or 10 seconds)
+          resolution: "768",
+          duration: 6,
+          "enable_prompt_optimizier": true
         },
       };
     } else {
@@ -79,7 +80,17 @@ export async function POST(request: NextRequest) {
     });
 
     if (!submitResponse.ok) {
-      const errorText = await submitResponse.text();
+      let errorText = "";
+      try {
+        // For text-to-video, don't try to parse as text since it might be binary
+        if (isTextToVideoModel) {
+          errorText = `Submit failed: ${submitResponse.status} ${submitResponse.statusText}`;
+        } else {
+          errorText = await submitResponse.text();
+        }
+      } catch (e) {
+        errorText = `Submit failed: ${submitResponse.status} ${submitResponse.statusText}`;
+      }
       console.error(`Submit failed for model ${model}:`, errorText);
       return NextResponse.json(
         { error: `Failed to submit generation job: ${submitResponse.status} ${submitResponse.statusText} - ${errorText}` },
@@ -87,7 +98,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const submitResult = await submitResponse.json();
+    let submitResult;
+    let contentUrl = "";
+    
+    try {
+      // For text-to-video, use the same approach as image-to-video (job-based)
+      if (isTextToVideoModel) {
+        submitResult = await submitResponse.json();
+      } else {
+        submitResult = await submitResponse.json();
+      }
+    } catch (e) {
+      console.error("Failed to parse submit response:", e);
+      return NextResponse.json(
+        { error: `Failed to parse generation job response: ${e instanceof Error ? e.message : 'Unknown error'}` },
+        { status: 500 }
+      );
+    }
+    
     const jobSetId = submitResult.job_set_id;
 
     if (!jobSetId) {
@@ -97,15 +125,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Get the generated content using the appropriate wait endpoint
+ 
     let waitUrl = "";
     let timeout = 30000; // Default 30s for images
     
-    if (isImageToVideoModel) {
+    if (isImageToVideoModel || isTextToVideoModel) {
+      // Use the same wait endpoint for both image-to-video and text-to-video
       waitUrl = `${API_BASE_URL}/image-to-video/jobs/${jobSetId}/wait-video`;
-      timeout = 60000; // 60s for video
-    } else if (isTextToVideoModel) {
-      waitUrl = `${API_BASE_URL}/text-to-video/jobs/${jobSetId}/wait-video`;
       timeout = 60000; // 60s for video
     } else {
       waitUrl = `${API_BASE_URL}/text-to-image/jobs/${jobSetId}/wait-image`;
@@ -118,7 +144,17 @@ export async function POST(request: NextRequest) {
     });
 
     if (!waitResponse.ok) {
-      const errorText = await waitResponse.text();
+      let errorText = "";
+      try {
+        // For text-to-video, don't try to parse as text since it might be binary
+        if (isTextToVideoModel) {
+          errorText = `Generation failed: ${waitResponse.status} ${waitResponse.statusText}`;
+        } else {
+          errorText = await waitResponse.text();
+        }
+      } catch (e) {
+        errorText = `Generation failed: ${waitResponse.status} ${waitResponse.statusText}`;
+      }
       return NextResponse.json(
         { error: `Generation failed: ${waitResponse.status} ${waitResponse.statusText} - ${errorText}` },
         { status: waitResponse.status }
@@ -126,24 +162,36 @@ export async function POST(request: NextRequest) {
     }
 
     // Get the content URL from the response
-    let contentUrl = waitResponse.url; // Default to redirect URL
+    contentUrl = waitResponse.url; // Default to redirect URL
     
-    try {
-      // Check if response is binary (video/image) or text
-      const contentType = waitResponse.headers.get('content-type');
-      
-      if (contentType && (contentType.includes('video/') || contentType.includes('image/'))) {
-        // For binary content, use the redirect URL
-        contentUrl = waitResponse.url;
-      } else {
-        // For text content, try to parse as URL
-        const responseText = await waitResponse.text();
-        if (responseText && (responseText.startsWith('http://') || responseText.startsWith('https://'))) {
-          contentUrl = responseText;
+    // For video models (both image-to-video and text-to-video), the API returns a 307 redirect to the video URL
+    // We should use the final URL after following redirects
+    if (isImageToVideoModel || isTextToVideoModel) {
+      contentUrl = waitResponse.url;
+    } else {
+      try {
+        // Check if response is binary (video/image) or text
+        const contentType = waitResponse.headers.get('content-type');
+        
+        if (contentType && (contentType.includes('video/') || contentType.includes('image/'))) {
+          // For binary content, use the redirect URL
+          contentUrl = waitResponse.url;
+        } else {
+          // For text content, try to parse as URL
+          try {
+            const responseText = await waitResponse.text();
+            if (responseText && (responseText.startsWith('http://') || responseText.startsWith('https://'))) {
+              contentUrl = responseText;
+            }
+          } catch (textError) {
+            // If text parsing fails, use the redirect URL
+            console.log("Text parsing failed, using redirect URL:", textError);
+          }
         }
+      } catch (e) {
+        // Use redirect URL if parsing fails
+        console.log("Using redirect URL due to parsing error:", e);
       }
-    } catch (e) {
-      // Use redirect URL if parsing fails
     }
     
     return NextResponse.json({

@@ -18,6 +18,7 @@ interface Post {
   description: string;
   type: string;
   images: string[];
+  ideas?: string;
   published: boolean;
   createdAt: string;
 }
@@ -30,8 +31,10 @@ export function Dashboard() {
     title: "", 
     description: "", 
     type: "image" as "image" | "video",
-    images: [] as string[]
+    images: [] as string[],
+    ideas: ""
   });
+  const [generatingIdeas, setGeneratingIdeas] = useState(false);
 
   // Debug: Log user data
 
@@ -53,6 +56,35 @@ export function Dashboard() {
     }
   };
 
+  const generateIdeas = async () => {
+    if (!newPost.title.trim() || !newPost.description.trim()) return;
+
+    setGeneratingIdeas(true);
+    try {
+      const response = await fetch("/api/ideas/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          product: {
+            name: newPost.title,
+            description: newPost.description,
+          },
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setNewPost(prev => ({ ...prev, ideas: data.ideas }));
+      }
+    } catch (error) {
+      console.error("Failed to generate ideas:", error);
+    } finally {
+      setGeneratingIdeas(false);
+    }
+  };
+
   const createPost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPost.title.trim() || !newPost.description.trim()) return;
@@ -67,7 +99,7 @@ export function Dashboard() {
       });
 
       if (response.ok) {
-        setNewPost({ title: "", description: "", type: "image", images: [] });
+        setNewPost({ title: "", description: "", type: "image", images: [], ideas: "" });
         fetchPosts();
       }
     } catch (error) {
@@ -109,26 +141,47 @@ export function Dashboard() {
               <CardContent>
                 <form onSubmit={createPost} className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="title">Battle Title</Label>
+                    <Label htmlFor="title">Product Name</Label>
                     <Input
                       id="title"
                       value={newPost.title}
                       onChange={(e) => setNewPost({ ...newPost, title: e.target.value })}
-                      placeholder="Enter battle title"
+                      placeholder="Enter product name"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="description">Battle Description</Label>
+                    <Label htmlFor="description">Product Description</Label>
                     <Textarea
                       id="description"
                       value={newPost.description}
                       onChange={(e) => setNewPost({ ...newPost, description: e.target.value })}
-                      placeholder="Describe the prompt engineering challenge..."
+                      placeholder="Describe the your product..."
                       rows={4}
                     />
                   </div>
+                  
                   <div className="space-y-2">
-                    <Label htmlFor="type">Battle Type</Label>
+                    <Label htmlFor="ideas">Ideas (Optional)</Label>
+                    <div className="space-y-2">
+                      <Textarea
+                        id="ideas"
+                        value={newPost.ideas}
+                        onChange={(e) => setNewPost({ ...newPost, ideas: e.target.value })}
+                        placeholder="AI-generated ideas will appear here..."
+                        rows={4}
+                      />
+                      <Button
+                        type="button"
+                        onClick={generateIdeas}
+                        disabled={!newPost.title.trim() || !newPost.description.trim() || generatingIdeas}
+                        className="w-full"
+                      >
+                        {generatingIdeas ? "Generating Ideas..." : "Generate Ideas"}
+                      </Button>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="type">Advertisement Type</Label>
                     <select
                       id="type"
                       value={newPost.type}

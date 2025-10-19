@@ -13,6 +13,7 @@ export async function GET() {
         description: posts.description,
         type: posts.type,
         images: posts.images,
+        ideas: posts.ideas,
         published: posts.published,
         createdAt: posts.createdAt,
         author: {
@@ -44,7 +45,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const { title, description, type, images } = await request.json();
+    const { title, description, type, images, ideas } = await request.json();
 
     if (!title || !description || !type) {
       return NextResponse.json(
@@ -61,6 +62,7 @@ export async function POST(request: NextRequest) {
         description,
         type,
         images: images || [],
+        ideas: ideas || null,
         authorId: session.user.id,
         published: false,
       })

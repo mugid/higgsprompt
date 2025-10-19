@@ -17,6 +17,7 @@ export async function GET(
         description: posts.description,
         type: posts.type,
         images: posts.images,
+        ideas: posts.ideas,
         published: posts.published,
         createdAt: posts.createdAt,
         author: {

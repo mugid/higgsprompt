@@ -79,7 +79,8 @@ export const posts = pgTable("posts", {
   title: text("title").notNull(),
   description: text("description").notNull(),
   type: postTypeEnum("type").default("image"),
-  images: text("images").array(), // Array of image URLs from UploadThing
+  images: text("images").array(), 
+  ideas: text("ideas"), 
   authorId: text("author_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),

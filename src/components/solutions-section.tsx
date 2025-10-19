@@ -171,8 +171,6 @@ export function SolutionsSection({ postId, postType }: SolutionsSectionProps) {
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
                         <Bot className="w-4 h-4" />
                         <span>{solution.modelName}</span>
-                        <Clock className="w-4 h-4" />
-                        <span></span>
                       </div>
                     </div>
                   </div>
